@@ -1,0 +1,41 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "[API]",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Orders.API/bin/Debug/net6.0/Orders.API.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/Orders.API/",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "[Worker]",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Orders.Worker/bin/Debug/net6.0/Orders.Worker.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/Orders.Worker",
+            "stopAtEntry": false,
+            "env": {
+                "DOTNET_ENVIRONMENT": "Development"
+            }
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Start All",
+            "configurations": [
+                "[API]",
+                "[Worker]"
+            ],
+            "stopAll": true
+        }
+    ],
+}
