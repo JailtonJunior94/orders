@@ -29,7 +29,7 @@ try
 
             config.UsingAzureServiceBus((context, cfg) =>
             {
-                cfg.Host("Endpoint=sb://orders-ns.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=4ELpTWc8EQMBgGFbRI8FsBVlPqhf2I0lNYOi946N1uM=");
+                cfg.Host("Endpoint=sb://orders-ns.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=heJiq7Tpe/L50cXGNI7v5oH0+iGLKxqtDNMbNMSEzaw=");
                 cfg.ConfigureEndpoints(context);
             });
         });

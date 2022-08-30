@@ -20,7 +20,7 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
                 {
                     context.Instance.CorrelationId = context.Data.CustomerID;
                 })
-                .SendAsync(new Uri("queue:create-order"), context => context.Init<CreateOrder>(new
+                .SendAsync(new Uri("queue:order"), context => context.Init<CreateOrder>(new
                 {
                     CustomerID = context.Instance.CorrelationId,
                 }))
@@ -29,9 +29,9 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
 
         During(CustomerRequested,
             When(OrderCreated)
-                .SendAsync(new Uri("queue:create-customer"), context => context.Init<CreateCustomer>(new
+                .SendAsync(new Uri("queue:customer"), context => context.Init<CreateCustomer>(new
                 {
-                    CustomerID = context.Instance.CustomerID,
+                    CustomerID = context.Instance.CorrelationId,
                 }))
                .TransitionTo(PaymentRequested)
         );
