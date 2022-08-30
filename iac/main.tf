@@ -2,7 +2,7 @@ terraform {
   backend "azurerm" {
     resource_group_name  = "terraform-rg"
     storage_account_name = "storageterraformjj"
-    container_name       = "pedidos-infra"
+    container_name       = "orders-infra"
     key                  = "terraform.tfstate"
   }
   required_providers {

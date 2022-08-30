@@ -22,7 +22,7 @@ try
         config.AddSagaStateMachine<OrderStateMachine, OrderState>().InMemoryRepository();
         config.UsingAzureServiceBus((context, configurator) =>
         {
-            configurator.Host("Endpoint=sb://orders-ns.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=3T0TP81LALVw7hf6nJysPVv4+lrZpMpZrzkkhDjWYLE=");
+            configurator.Host(builder.Configuration["ServiceBus:ConnectionString"]);
             configurator.ReceiveEndpoint("order-saga", e =>
             {
                 e.UseInMemoryOutbox();
