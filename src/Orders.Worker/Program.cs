@@ -1,6 +1,6 @@
 using Serilog;
-using Orders.Worker;
 using MassTransit;
+using Orders.Worker;
 using System.Reflection;
 
 try
@@ -15,6 +15,7 @@ try
              .AddEnvironmentVariables();
 
         IConfiguration configuration = builder.Build();
+        // services.AddLogger();
 
         services.AddMassTransit(config =>
         {
@@ -23,9 +24,12 @@ try
             Assembly entryAssembly = Assembly.GetEntryAssembly();
             config.AddConsumers(entryAssembly);
 
+            // config.AddConsumer<OrderConsumer, OrderConsumerDefinition>();
+            // config.AddConsumer<CustomerConsumer, CustomerConsumerDefinition>();
+
             config.UsingAzureServiceBus((context, cfg) =>
             {
-                cfg.Host("Endpoint=sb://pedidos-ns.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=iaiR8rJig+ev9cUV+06v18Ucrl8yFPwqzFX2/SyMID8=");
+                cfg.Host("Endpoint=sb://orders-ns.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=4ELpTWc8EQMBgGFbRI8FsBVlPqhf2I0lNYOi946N1uM=");
                 cfg.ConfigureEndpoints(context);
             });
         });

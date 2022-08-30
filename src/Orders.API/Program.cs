@@ -1,6 +1,8 @@
 using Serilog;
 using MassTransit;
 using Orders.Core.Sagas;
+using Orders.Core.Services;
+using Orders.Core.Interfaces;
 
 try
 {
@@ -11,16 +13,19 @@ try
         .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true, true)
         .AddEnvironmentVariables();
 
+    // builder.Host.AddLogger();
+    builder.Services.AddScoped<IOrderService, OrderService>();
+
     builder.Services.AddMassTransit(config =>
     {
-        config.AddSagaStateMachine<TravelStateMachine, TravelState>().InMemoryRepository();
+        config.AddSagaStateMachine<OrderStateMachine, OrderState>().InMemoryRepository();
         config.UsingAzureServiceBus((context, configurator) =>
         {
-            configurator.Host("Endpoint=sb://pedidos-ns.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=iaiR8rJig+ev9cUV+06v18Ucrl8yFPwqzFX2/SyMID8=");
-            configurator.ReceiveEndpoint("travel-saga", e =>
+            configurator.Host("Endpoint=sb://orders-ns.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=4ELpTWc8EQMBgGFbRI8FsBVlPqhf2I0lNYOi946N1uM=");
+            configurator.ReceiveEndpoint("order-saga", e =>
             {
                 e.UseInMemoryOutbox();
-                e.StateMachineSaga<TravelState>(context);
+                e.StateMachineSaga<OrderState>(context);
             });
         });
     });
