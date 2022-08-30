@@ -3,6 +3,7 @@ using MassTransit;
 using Orders.Core.Sagas;
 using Orders.Core.Services;
 using Orders.Core.Interfaces;
+using Orders.API.Configurations;
 
 try
 {
@@ -13,7 +14,7 @@ try
         .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true, true)
         .AddEnvironmentVariables();
 
-    // builder.Host.AddLogger();
+    builder.Host.AddLogger();
     builder.Services.AddScoped<IOrderService, OrderService>();
 
     builder.Services.AddMassTransit(config =>
@@ -21,7 +22,7 @@ try
         config.AddSagaStateMachine<OrderStateMachine, OrderState>().InMemoryRepository();
         config.UsingAzureServiceBus((context, configurator) =>
         {
-            configurator.Host("Endpoint=sb://orders-ns.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=heJiq7Tpe/L50cXGNI7v5oH0+iGLKxqtDNMbNMSEzaw=");
+            configurator.Host("Endpoint=sb://orders-ns.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=3T0TP81LALVw7hf6nJysPVv4+lrZpMpZrzkkhDjWYLE=");
             configurator.ReceiveEndpoint("order-saga", e =>
             {
                 e.UseInMemoryOutbox();

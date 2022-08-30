@@ -16,6 +16,12 @@ public class CustomerConsumer : IConsumer<CreateCustomer>
 
     public Task Consume(ConsumeContext<CreateCustomer> context)
     {
+        /* Acessar Banco */
+
+        /* Chamar outras APIs */
+
+        /*  */
+        
         _logger.LogInformation("Consuming message {@Message}", context.Message);
 
         return context.Publish<CustomerCreated>(new

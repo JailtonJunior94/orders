@@ -17,7 +17,7 @@ public class OrderConsumer : IConsumer<CreateOrder>
     public Task Consume(ConsumeContext<CreateOrder> context)
     {
         _logger.LogInformation("Consuming message {@Message}", context.Message);
-
+        
         return context.Publish<OrderCreated>(new
         {
             context.Message.CustomerID

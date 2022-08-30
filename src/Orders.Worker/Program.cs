@@ -2,6 +2,7 @@ using Serilog;
 using MassTransit;
 using Orders.Worker;
 using System.Reflection;
+using Orders.Worker.Configurations;
 
 try
 {
@@ -15,7 +16,7 @@ try
              .AddEnvironmentVariables();
 
         IConfiguration configuration = builder.Build();
-        // services.AddLogger();
+        services.AddLogger();
 
         services.AddMassTransit(config =>
         {
@@ -24,12 +25,9 @@ try
             Assembly entryAssembly = Assembly.GetEntryAssembly();
             config.AddConsumers(entryAssembly);
 
-            // config.AddConsumer<OrderConsumer, OrderConsumerDefinition>();
-            // config.AddConsumer<CustomerConsumer, CustomerConsumerDefinition>();
-
             config.UsingAzureServiceBus((context, cfg) =>
             {
-                cfg.Host("Endpoint=sb://orders-ns.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=heJiq7Tpe/L50cXGNI7v5oH0+iGLKxqtDNMbNMSEzaw=");
+                cfg.Host("Endpoint=sb://orders-ns.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=3T0TP81LALVw7hf6nJysPVv4+lrZpMpZrzkkhDjWYLE=");
                 cfg.ConfigureEndpoints(context);
             });
         });
