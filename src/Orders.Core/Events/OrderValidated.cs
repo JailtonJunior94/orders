@@ -8,4 +8,5 @@ public class OrderValidated
     }
 
     public Guid CustomerID { get; set; }
+    public long OrderID { get; set; }
 }

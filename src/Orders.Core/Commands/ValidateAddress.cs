@@ -1,7 +1,7 @@
 namespace Orders.Core.Commands;
 
-public class CreateOrder
+public class ValidateAddress
 {
     public Guid CustomerID { get; set; }
-    public long OrderID { get; set; }
+    public string Zipcode { get; set; }
 }
