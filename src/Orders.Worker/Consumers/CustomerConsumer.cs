@@ -1,30 +1,34 @@
 using MassTransit;
 using Orders.Core.Commands;
 using MassTransit.Definition;
+using Orders.Core.Infra.Facades;
 using MassTransit.ConsumeConfigurators;
 
 namespace Orders.Worker.Consumers;
 
 public class CustomerConsumer : IConsumer<CreateCustomer>
 {
+    private readonly ICustomerFacade _facade;
     private readonly ILogger<CustomerConsumer> _logger;
+    private readonly string _prefix = $"{nameof(CustomerConsumer)}";
 
-    public CustomerConsumer(ILogger<CustomerConsumer> logger)
+    public CustomerConsumer(ICustomerFacade facade,
+                            ILogger<CustomerConsumer> logger)
     {
         _logger = logger;
+        _facade = facade;
     }
 
-    public Task Consume(ConsumeContext<CreateCustomer> context)
+    public async Task Consume(ConsumeContext<CreateCustomer> context)
     {
-        /* Acessar Banco */
+        bool response = await _facade.CreateCustomerAsync(context.Message);
+        if (!response)
+        {
+            _logger.LogError($"[{_prefix}] [Cadastrado de Cliente] [Erro ao cadastrar Cliente]");
+        }
 
-        /* Chamar outras APIs */
-
-        /*  */
-        
-        _logger.LogInformation("Consuming message {@Message}", context.Message);
-
-        return context.Publish<CustomerCreated>(new
+        _logger.LogInformation($"[{_prefix}] [Cadastrado de Cliente] [Cliente cadastrado com sucesso]");
+        await context.Publish<CustomerCreated>(new
         {
             context.Message.CustomerID
         });

@@ -1,5 +1,6 @@
 using Orders.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Orders.Core.Requests;
 
 namespace Orders.API.Controllers;
 
@@ -14,9 +15,9 @@ public class OrderController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post()
+    public async Task<IActionResult> Post([FromBody] Order order)
     {
-        await _service.CreateOrderAsync();
+        await _service.CreateOrderAsync(order);
         return NoContent();
     }
 }

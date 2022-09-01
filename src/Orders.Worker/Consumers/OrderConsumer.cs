@@ -2,23 +2,35 @@ using MassTransit;
 using Orders.Core.Commands;
 using MassTransit.Definition;
 using MassTransit.ConsumeConfigurators;
+using Orders.Core.Infra.Repositories;
 
 namespace Orders.Worker.Consumers;
 
 public class OrderConsumer : IConsumer<CreateOrder>
 {
+    private readonly IOrderRepository _repository;
     private readonly ILogger<OrderConsumer> _logger;
+    private readonly string _prefix = $"{nameof(OrderConsumer)}";
 
-    public OrderConsumer(ILogger<OrderConsumer> logger)
+    public OrderConsumer(IOrderRepository repository,
+                         ILogger<OrderConsumer> logger)
     {
+
         _logger = logger;
+        _repository = repository;
     }
 
-    public Task Consume(ConsumeContext<CreateOrder> context)
+    public async Task Consume(ConsumeContext<CreateOrder> context)
     {
-        _logger.LogInformation("Consuming message {@Message}", context.Message);
-        
-        return context.Publish<OrderCreated>(new
+        bool response = await _repository.CreateOrder(context.Message);
+        if (!response)
+        {
+            _logger.LogError($"[{_prefix}] [Cadastrado de pedido] [Erro ao cadastrar pedido]");
+            return;
+        }
+
+        _logger.LogInformation($"[{_prefix}] [Cadastrado de pedido] [Pedido cadastrado com sucesso]");
+        await context.Publish<OrderCreated>(new
         {
             context.Message.CustomerID
         });

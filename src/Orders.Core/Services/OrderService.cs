@@ -2,6 +2,7 @@ using MassTransit;
 using Orders.Core.Commands;
 using Orders.Core.Interfaces;
 using Microsoft.Extensions.Logging;
+using Orders.Core.Requests;
 
 namespace Orders.Core.Services;
 
@@ -18,9 +19,9 @@ public class OrderService : IOrderService
         _endpoint = endpoint;
     }
 
-    public async Task CreateOrderAsync()
+    public async Task CreateOrderAsync(Order order)
     {
-        _logger.LogInformation($"[{_prefix}] [{nameof(CreateOrderAsync)}] [Validando dados do pedido]");
+        _logger.LogInformation($"[{_prefix}] [{nameof(CreateOrderAsync)}] [Pedido cadastrado e validado]");
         OrderValidated orderValidated = new OrderValidated(Guid.NewGuid());
 
         await _endpoint.Publish(orderValidated);

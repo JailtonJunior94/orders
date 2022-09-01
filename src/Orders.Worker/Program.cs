@@ -3,6 +3,8 @@ using MassTransit;
 using Orders.Worker;
 using System.Reflection;
 using Orders.Worker.Configurations;
+using Orders.Core.Infra.Facades;
+using Orders.Core.Infra.Repositories;
 
 try
 {
@@ -17,6 +19,9 @@ try
 
         IConfiguration configuration = builder.Build();
         services.AddLogger();
+        services.AddScoped<ICustomerFacade, CustomerFacade>();
+        services.AddScoped<IAddressFacade, AddressFacade>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
 
         services.AddMassTransit(config =>
         {

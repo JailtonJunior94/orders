@@ -4,6 +4,7 @@ using Orders.Core.Sagas;
 using Orders.Core.Services;
 using Orders.Core.Interfaces;
 using Orders.API.Configurations;
+using Orders.Core.Infra.Repositories;
 
 try
 {
@@ -16,6 +17,7 @@ try
 
     builder.Host.AddLogger();
     builder.Services.AddScoped<IOrderService, OrderService>();
+    builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
     builder.Services.AddMassTransit(config =>
     {
