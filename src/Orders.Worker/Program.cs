@@ -1,9 +1,9 @@
 using Serilog;
 using MassTransit;
-using Orders.Worker;
 using System.Reflection;
-using Orders.Worker.Configurations;
+using Orders.Core.Commands;
 using Orders.Core.Infra.Facades;
+using Orders.Worker.Configurations;
 using Orders.Core.Infra.Repositories;
 
 try
@@ -32,13 +32,14 @@ try
 
             config.UsingAzureServiceBus((context, cfg) =>
             {
+                cfg.Send<OrderValidated>(s => s.UseSessionIdFormatter(c => c.Message.OrderID.ToString("D")));
+                cfg.RequiresSession = true;
                 cfg.Host(configuration["ServiceBus:ConnectionString"]);
                 cfg.ConfigureEndpoints(context);
             });
         });
 
         services.AddMassTransitHostedService(true);
-        services.AddHostedService<Worker>();
     })
     .UseSerilog()
     .Build();

@@ -55,6 +55,8 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
             .Then(_ => Console.WriteLine("Cliente cadastrado"))
             .Finalize()
         );
+
+        SetCompletedWhenFinalized();
     }
 
     public State CustomerRequested { get; set; }

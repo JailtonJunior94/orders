@@ -1,6 +1,7 @@
 using Serilog;
 using MassTransit;
 using Orders.Core.Sagas;
+using Orders.Core.Commands;
 using Orders.Core.Services;
 using Orders.Core.Interfaces;
 using Orders.API.Configurations;
@@ -21,14 +22,15 @@ try
 
     builder.Services.AddMassTransit(config =>
     {
-        config.AddSagaStateMachine<OrderStateMachine, OrderState>().InMemoryRepository();
+        config.AddSagaStateMachine<OrderStateMachine, OrderState>().MessageSessionRepository();
         config.UsingAzureServiceBus((context, configurator) =>
         {
             configurator.Host(builder.Configuration["ServiceBus:ConnectionString"]);
+            configurator.Send<OrderValidated>(s => s.UseSessionIdFormatter(c => c.Message.OrderID.ToString("D")));
             configurator.ReceiveEndpoint("order-saga", e =>
             {
-                e.UseInMemoryOutbox();
-                e.StateMachineSaga<OrderState>(context);
+                e.RequiresSession = true;
+                e.ConfigureSaga<OrderState>(context);
             });
         });
     });

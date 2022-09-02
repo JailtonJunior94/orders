@@ -8,6 +8,5 @@ public class OrderState : SagaStateMachineInstance
     public string CurrentState { get; set; }
     public long OrderID { get; set; }
     public long CustomerID { get; set; }
-    public int CanalDeVenda { get; set; }
     public int Version { get; set; }
 }
