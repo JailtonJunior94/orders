@@ -6,6 +6,8 @@ using Orders.Core.Services;
 using Orders.Core.Interfaces;
 using Orders.API.Configurations;
 using Orders.Core.Infra.Repositories;
+using Orders.Core.Infra.Facades;
+using Orders.Core.Consumers;
 
 try
 {
@@ -20,22 +22,26 @@ try
     builder.Services.AddScoped<IOrderService, OrderService>();
     builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
+    builder.Services.AddScoped<ICustomerFacade, CustomerFacade>();
+    builder.Services.AddScoped<IAddressFacade, AddressFacade>();
+    builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+
     builder.Services.AddMassTransit(config =>
     {
-        config.AddSagaStateMachine<OrderStateMachine, OrderState>().MessageSessionRepository();
+        config.SetKebabCaseEndpointNameFormatter();
+        config.AddConsumer<AddressConsumer, AddressConsumerDefinition>();
+        config.AddConsumer<CustomerConsumer, CustomerConsumerDefinition>();
+        config.AddConsumer<OrderConsumer, OrderConsumerDefinition>();
+        config.AddSagaStateMachine<OrderStateMachine, OrderState, OrderStateDefinition>().MessageSessionRepository();
+ 
         config.UsingAzureServiceBus((context, configurator) =>
         {
             configurator.Host(builder.Configuration["ServiceBus:ConnectionString"]);
-            configurator.Send<OrderValidated>(s => s.UseSessionIdFormatter(c => c.Message.OrderID.ToString("D")));
-            configurator.ReceiveEndpoint("order-saga", e =>
-            {
-                e.RequiresSession = true;
-                e.ConfigureSaga<OrderState>(context);
-            });
+            configurator.Send<OrderValidated>(s => s.UseSessionIdFormatter(c => c.Message.CustomerID.ToString("D")));
+            configurator.ConfigureEndpoints(context);
         });
     });
 
-    builder.Services.AddMassTransitHostedService();
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();

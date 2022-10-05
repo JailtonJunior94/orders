@@ -1,10 +1,9 @@
 using MassTransit;
-using MassTransit.Definition;
 using Orders.Core.Infra.Facades;
-using MassTransit.ConsumeConfigurators;
 using Orders.Core.Commands;
+using Microsoft.Extensions.Logging;
 
-namespace Orders.Worker.Consumers;
+namespace Orders.Core.Consumers;
 
 public class AddressConsumer : IConsumer<ValidateAddress>
 {
@@ -40,6 +39,7 @@ public class AddressConsumerDefinition : ConsumerDefinition<AddressConsumer>
     protected override void ConfigureConsumer(IReceiveEndpointConfigurator endpointConfigurator,
                                               IConsumerConfigurator<AddressConsumer> consumerConfigurator)
     {
-
+        endpointConfigurator.UseMessageRetry(r => r.Intervals(100, 200, 500, 1000));
+        endpointConfigurator.UseInMemoryOutbox();
     }
 }

@@ -1,10 +1,9 @@
 using MassTransit;
 using Orders.Core.Commands;
-using MassTransit.Definition;
 using Orders.Core.Infra.Facades;
-using MassTransit.ConsumeConfigurators;
+using Microsoft.Extensions.Logging;
 
-namespace Orders.Worker.Consumers;
+namespace Orders.Core.Consumers;
 
 public class CustomerConsumer : IConsumer<CreateCustomer>
 {

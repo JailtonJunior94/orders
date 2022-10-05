@@ -1,10 +1,9 @@
 using MassTransit;
 using Orders.Core.Commands;
-using MassTransit.Definition;
-using MassTransit.ConsumeConfigurators;
 using Orders.Core.Infra.Repositories;
+using Microsoft.Extensions.Logging;
 
-namespace Orders.Worker.Consumers;
+namespace Orders.Core.Consumers;
 
 public class OrderConsumer : IConsumer<CreateOrder>
 {

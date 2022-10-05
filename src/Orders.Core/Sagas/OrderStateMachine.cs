@@ -1,12 +1,13 @@
 using MassTransit;
-using Automatonymous;
+using Microsoft.Extensions.Logging;
 using Orders.Core.Commands;
 
 namespace Orders.Core.Sagas;
 
 public class OrderStateMachine : MassTransitStateMachine<OrderState>
 {
-    public OrderStateMachine()
+    [Obsolete]
+    public OrderStateMachine(ILogger<OrderStateMachine> logger)
     {
         InstanceState(x => x.CurrentState);
 
@@ -24,7 +25,7 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
                 })
                 .SendAsync(new Uri("queue:order"), context => context.Init<CreateOrder>(new
                 {
-                    CustomerID = context.Instance.CorrelationId,
+                    CustomerID = context.CorrelationId,
                     OrderID = context.Instance.OrderID,
                 }))
                 .TransitionTo(AddressRequested)
@@ -35,7 +36,7 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
             When(OrderCreated)
             .SendAsync(new Uri("queue:address"), context => context.Init<ValidateAddress>(new
             {
-                CustomerID = context.Instance.CorrelationId,
+                CustomerID = context.CorrelationId,
             }))
             .TransitionTo(CustomerRequested)
         );
@@ -45,7 +46,7 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
             When(AddressValidated)
                 .SendAsync(new Uri("queue:customer"), context => context.Init<CreateCustomer>(new
                 {
-                    CustomerID = context.Instance.CorrelationId,
+                    CustomerID = context.CorrelationId,
                 }))
                .TransitionTo(PaymentRequested)
         );
@@ -64,7 +65,7 @@ public class OrderStateMachine : MassTransitStateMachine<OrderState>
     public State AddressRequested { get; set; }
 
     public Event<OrderValidated> OrderValidated { get; set; }
-    
+
     public Event<OrderCreated> OrderCreated { get; set; }
     public Event<CustomerCreated> CustomerCreated { get; set; }
     public Event<AddressValidated> AddressValidated { get; set; }
